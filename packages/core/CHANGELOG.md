@@ -1,5 +1,24 @@
 # @mastra/core
 
+## 1.74.0-alpha.2
+
+### Minor Changes
+
+- Added `agent.getMessages()` to tool execution context in standard and durable agent loops. Tools can read the current conversation, including remembered messages and in-run responses, without changing the existing input-only `messages` field. ([#25525](https://github.com/mastra-ai/mastra/pull/25525))
+
+  ```ts
+  execute: async (input, context) => {
+    const messages = context?.agent?.getMessages?.() ?? [];
+    return { messageCount: messages.length };
+  };
+  ```
+
+  The getter reflects message-list removals, but not transient transforms applied only to the provider prompt. Treat returned messages as read-only.
+
+- Added group filtering and generation ordering to observational memory history. For example, `getObservationalMemoryHistory(threadId, resourceId, 1, { groupId, sortDirection: "ASC" })` finds the earliest retained record containing a group in active observations or persisted buffered chunks. Adapters advertise support through `supportsObservationalMemoryHistorySearch`. Pass `recordId` to read one record by ID; it only matches records for the requested thread or resource. ([#25525](https://github.com/mastra-ai/mastra/pull/25525))
+
+  Convex users need to redeploy their Mastra server functions for these filters to apply.
+
 ## 1.73.1-alpha.1
 
 ### Patch Changes
